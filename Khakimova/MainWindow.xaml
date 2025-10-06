@@ -1,0 +1,23 @@
+﻿<Window x:Class="Khakimova.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Theme Switcher" Height="400" Width="600">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Панель выбора темы -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
+            <TextBlock Text="Выберите тему: " VerticalAlignment="Center" Margin="10,0"/>
+            <RadioButton x:Name="LightThemeRadio" Content="Светлая тема" GroupName="Theme" 
+                        IsChecked="True" Checked="ThemeRadioButton_Checked" Margin="10"/>
+            <RadioButton x:Name="DarkThemeRadio" Content="Темная тема" GroupName="Theme" 
+                        Checked="ThemeRadioButton_Checked" Margin="10"/>
+            <Button x:Name="ToAuth" Content="Log In" Click="ToAuthPage_btn" Margin="10" Width="120" Height="60"/>
+        </StackPanel>
+
+        <Frame x:Name="Main" NavigationUIVisibility="Hidden" Navigated="Main_Navigated" Margin="10,0,-10,0"/>
+    </Grid>
+</Window>

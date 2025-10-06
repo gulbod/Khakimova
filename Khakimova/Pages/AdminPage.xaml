@@ -1,0 +1,77 @@
+﻿<Page x:Class="Khakimova.Pages.AdminPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Admin Page">
+
+    <Grid Background="White">
+        <!-- Заголовок -->
+        <TextBlock Text="Панель администратора" 
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Top" 
+                   FontSize="24" 
+                   FontWeight="Bold" 
+                   Margin="0,50,0,0"
+                   Foreground="DarkBlue"/>
+
+        <!-- Кнопки навигации -->
+        <Button x:Name="BtnTab1" 
+                Content="Таблица пользователей" 
+                HorizontalAlignment="Left" 
+                Margin="68,160,0,0" 
+                VerticalAlignment="Top" 
+                RenderTransformOrigin="-1.326,0.371" 
+                Height="41" 
+                Width="181" 
+                Click="BtnTab1_Click"
+                FontSize="14"
+                Background="LightBlue"
+                BorderBrush="DarkBlue"/>
+
+        <Button x:Name="BtnTab2" 
+                Content="Таблица категорий" 
+                HorizontalAlignment="Center" 
+                Margin="0,160,0,0" 
+                VerticalAlignment="Top" 
+                RenderTransformOrigin="-1.326,0.371" 
+                Height="41" 
+                Width="173" 
+                Click="BtnTab2_Click"
+                FontSize="14"
+                Background="LightGreen"
+                BorderBrush="DarkGreen"/>
+
+        <Button x:Name="BtnTab3" 
+                Content="Таблица платежей" 
+                HorizontalAlignment="Left" 
+                Margin="531,160,0,0" 
+                VerticalAlignment="Top" 
+                RenderTransformOrigin="-1.326,0.371" 
+                Height="41" 
+                Width="163" 
+                Click="BtnTab3_Click"
+                FontSize="14"
+                Background="LightCoral"
+                BorderBrush="DarkRed"/>
+
+        <Button x:Name="BtnTab4" 
+                Content="Диаграммы" 
+                HorizontalAlignment="Center" 
+                Margin="0,321,0,0" 
+                VerticalAlignment="Top" 
+                RenderTransformOrigin="-1.326,0.371" 
+                Height="41" 
+                Width="131" 
+                Click="BtnTab4_Click"
+                FontSize="14"
+                Background="Gold"
+                BorderBrush="DarkGoldenrod"/>
+
+        <!-- Информационный текст -->
+        <TextBlock Text="Выберите раздел для управления системой" 
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Top" 
+                   FontSize="16" 
+                   Margin="0,100,0,0"
+                   Foreground="Gray"/>
+    </Grid>
+</Page>
