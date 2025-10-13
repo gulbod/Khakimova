@@ -15,9 +15,9 @@
                         IsChecked="True" Checked="ThemeRadioButton_Checked" Margin="10"/>
             <RadioButton x:Name="DarkThemeRadio" Content="Темная тема" GroupName="Theme" 
                         Checked="ThemeRadioButton_Checked" Margin="10"/>
-            <Button x:Name="ToAuth" Content="Log In" Click="ToAuthPage_btn" Margin="10" Width="120" Height="60"/>
+            <Button x:Name="ToAuth" Content="Log In" Click="ToAuthPage_btn" Margin="10" Width="110" Height="60"/>
         </StackPanel>
 
-        <Frame x:Name="Main" NavigationUIVisibility="Hidden" Navigated="Main_Navigated" Margin="10,0,-10,0"/>
+        <Frame x:Name="Main" NavigationUIVisibility="Hidden" Navigated="Main_Navigated" Margin="0,-10,0,10"/>
     </Grid>
 </Window>

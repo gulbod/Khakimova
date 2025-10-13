@@ -4,24 +4,27 @@
       Title="Admin Page">
 
     <Grid Background="White">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="543*"/>
+            <ColumnDefinition Width="88*"/>
+        </Grid.ColumnDefinitions>
+
         <!-- Заголовок -->
         <TextBlock Text="Панель администратора" 
-                   HorizontalAlignment="Center" 
+                   HorizontalAlignment="Left" 
                    VerticalAlignment="Top" 
                    FontSize="24" 
                    FontWeight="Bold" 
-                   Margin="0,50,0,0"
+                   Margin="163,50,0,0"
                    Foreground="DarkBlue"/>
 
         <!-- Кнопки навигации -->
         <Button x:Name="BtnTab1" 
                 Content="Таблица пользователей" 
                 HorizontalAlignment="Left" 
-                Margin="68,160,0,0" 
-                VerticalAlignment="Top" 
-                RenderTransformOrigin="-1.326,0.371" 
-                Height="41" 
-                Width="181" 
+                Margin="18,160,0,137" 
+                Height="NaN" 
+                Width="221" 
                 Click="BtnTab1_Click"
                 FontSize="14"
                 Background="LightBlue"
@@ -29,38 +32,32 @@
 
         <Button x:Name="BtnTab2" 
                 Content="Таблица категорий" 
-                HorizontalAlignment="Center" 
-                Margin="0,160,0,0" 
-                VerticalAlignment="Top" 
-                RenderTransformOrigin="-1.326,0.371" 
-                Height="41" 
-                Width="173" 
+                HorizontalAlignment="Left" 
+                Margin="253,0,0,137" 
+                Height="65" 
+                Width="190" 
                 Click="BtnTab2_Click"
-                FontSize="14"
+                FontSize="16"
                 Background="LightGreen"
-                BorderBrush="DarkGreen"/>
+                BorderBrush="DarkGreen" VerticalAlignment="Bottom"/>
 
         <Button x:Name="BtnTab3" 
                 Content="Таблица платежей" 
-                HorizontalAlignment="Left" 
-                Margin="531,160,0,0" 
-                VerticalAlignment="Top" 
-                RenderTransformOrigin="-1.326,0.371" 
-                Height="41" 
-                Width="163" 
+                Margin="459,160,0,137" 
+                Height="NaN" 
+                Width="172" 
                 Click="BtnTab3_Click"
                 FontSize="14"
                 Background="LightCoral"
-                BorderBrush="DarkRed"/>
+                BorderBrush="DarkRed" HorizontalAlignment="Left" Grid.ColumnSpan="2"/>
 
         <Button x:Name="BtnTab4" 
-                Content="Диаграммы" 
-                HorizontalAlignment="Center" 
-                Margin="0,321,0,0" 
+                Content="Диаграммы и отчеты" 
+                HorizontalAlignment="Left" 
+                Margin="254,306,0,0" 
                 VerticalAlignment="Top" 
-                RenderTransformOrigin="-1.326,0.371" 
-                Height="41" 
-                Width="131" 
+                Height="56" 
+                Width="262" 
                 Click="BtnTab4_Click"
                 FontSize="14"
                 Background="Gold"
@@ -68,10 +65,10 @@
 
         <!-- Информационный текст -->
         <TextBlock Text="Выберите раздел для управления системой" 
-                   HorizontalAlignment="Center" 
+                   HorizontalAlignment="Left" 
                    VerticalAlignment="Top" 
                    FontSize="16" 
-                   Margin="0,100,0,0"
+                   Margin="154,100,0,0"
                    Foreground="Gray"/>
     </Grid>
 </Page>

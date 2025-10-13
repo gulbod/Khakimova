@@ -13,122 +13,112 @@ namespace Khakimova.Pages
         public RegPage()
         {
             InitializeComponent();
-            comboBxRole.SelectedIndex = 0;
+            ComboBoxRole.SelectedIndex = 0;
         }
 
-        // Метод хеширования пароля (такой же как в AuthPage)
+        // Метод хеширования пароля
         public static string GetHash(string password)
         {
-            using (var hash = SHA1.Create())
+            using (SHA1 hash = SHA1.Create())
             {
                 return string.Concat(hash.ComputeHash(Encoding.UTF8.GetBytes(password))
                     .Select(x => x.ToString("X2")));
             }
         }
 
-        // Обработчики для placeholder'ов (без изменений)
-        private void lblLogHitn_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        // Обработчики для placeholder'ов
+        private void LabelFullNameHint_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            txtbxLog.Focus();
+            TextBoxFullName.Focus();
         }
 
-        private void lblPassHitn_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void LabelLoginHint_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            passBxFrst.Focus();
+            TextBoxLogin.Focus();
         }
 
-        private void lblPassSecHitn_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void LabelPasswordHint_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            passBxScnd.Focus();
+            PasswordBoxFirst.Focus();
         }
 
-        private void lblFioHitn_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void LabelPasswordSecondHint_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            txtbxFIO.Focus();
+            PasswordBoxSecond.Focus();
         }
 
-        // Обработчики изменения текста (без изменений)
-        private void txtbxLog_TextChanged(object sender, TextChangedEventArgs e)
+        // Обработчики изменения текста
+        private void TextBoxLogin_TextChanged(object sender, TextChangedEventArgs e)
         {
-            lblLogHitn.Visibility = Visibility.Visible;
-            if (txtbxLog.Text.Length > 0)
-            {
-                lblLogHitn.Visibility = Visibility.Hidden;
-            }
+            LabelLoginHint.Visibility = TextBoxLogin.Text.Length > 0 ? Visibility.Hidden : Visibility.Visible;
         }
 
-        private void txtbxFIO_TextChanged(object sender, TextChangedEventArgs e)
+        private void TextBoxFullName_TextChanged(object sender, TextChangedEventArgs e)
         {
-            lblFioHitn.Visibility = Visibility.Visible;
-            if (txtbxFIO.Text.Length > 0)
-            {
-                lblFioHitn.Visibility = Visibility.Hidden;
-            }
+            LabelFullNameHint.Visibility = TextBoxFullName.Text.Length > 0 ? Visibility.Hidden : Visibility.Visible;
         }
 
-        private void passBxFrst_PasswordChanged(object sender, RoutedEventArgs e)
+        private void PasswordBoxFirst_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            lblPassHitn.Visibility = Visibility.Visible;
-            if (passBxFrst.Password.Length > 0)
-            {
-                lblPassHitn.Visibility = Visibility.Hidden;
-            }
+            LabelPasswordHint.Visibility = PasswordBoxFirst.Password.Length > 0 ? Visibility.Hidden : Visibility.Visible;
         }
 
-        private void passBxScnd_PasswordChanged(object sender, RoutedEventArgs e)
+        private void PasswordBoxSecond_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            lblPassSecHitn.Visibility = Visibility.Visible;
-            if (passBxScnd.Password.Length > 0)
-            {
-                lblPassSecHitn.Visibility = Visibility.Hidden;
-            }
+            LabelPasswordSecondHint.Visibility = PasswordBoxSecond.Password.Length > 0 ? Visibility.Hidden : Visibility.Visible;
         }
 
-        // Обработчик кнопки регистрации с хешированием
-        private void regButton_Click(object sender, RoutedEventArgs e)
+        // Обработчик кнопки регистрации
+        private void RegisterButton_Click(object sender, RoutedEventArgs e)
         {
             // Проверка заполнения всех полей
-            if (string.IsNullOrEmpty(txtbxLog.Text) ||
-                string.IsNullOrEmpty(txtbxFIO.Text) ||
-                string.IsNullOrEmpty(passBxFrst.Password) ||
-                string.IsNullOrEmpty(passBxScnd.Password))
+            if (string.IsNullOrEmpty(TextBoxLogin.Text) ||
+                string.IsNullOrEmpty(TextBoxFullName.Text) ||
+                string.IsNullOrEmpty(PasswordBoxFirst.Password) ||
+                string.IsNullOrEmpty(PasswordBoxSecond.Password))
             {
                 MessageBox.Show("Заполните все поля!");
                 return;
             }
 
             // Проверка формата пароля
-            if (passBxFrst.Password.Length < 6)
+            if (PasswordBoxFirst.Password.Length < 6)
             {
                 MessageBox.Show("Пароль слишком короткий, должно быть минимум 6 символов!");
                 return;
             }
 
-            bool en = true;
-            bool number = false;
+            bool isEnglish = true;
+            bool hasNumber = false;
 
-            for (int i = 0; i < passBxFrst.Password.Length; i++)
+            // Традиционная проверка символов для C# 7.3
+            foreach (char c in PasswordBoxFirst.Password)
             {
-                if (passBxFrst.Password[i] >= '0' && passBxFrst.Password[i] <= '9')
-                    number = true;
-                else if (!((passBxFrst.Password[i] >= 'A' && passBxFrst.Password[i] <= 'Z') ||
-                          (passBxFrst.Password[i] >= 'a' && passBxFrst.Password[i] <= 'z')))
-                    en = false;
+                // Проверка цифр
+                if (c >= '0' && c <= '9')
+                {
+                    hasNumber = true;
+                }
+                // Проверка английских букв
+                else if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')))
+                {
+                    isEnglish = false;
+                }
             }
 
-            if (!en)
+            if (!isEnglish)
             {
                 MessageBox.Show("Используйте только английскую раскладку!");
                 return;
             }
-            else if (!number)
+            else if (!hasNumber)
             {
                 MessageBox.Show("Добавьте хотя бы одну цифру!");
                 return;
             }
 
             // Проверка совпадения паролей
-            if (passBxFrst.Password != passBxScnd.Password)
+            if (PasswordBoxFirst.Password != PasswordBoxSecond.Password)
             {
                 MessageBox.Show("Пароли не совпадают!");
                 return;
@@ -137,52 +127,49 @@ namespace Khakimova.Pages
             // Если все проверки пройдены - регистрируем пользователя
             try
             {
-                // Хешируем пароль перед сохранением
-                string hashedPassword = GetHash(passBxFrst.Password);
+                // Хеширование пароля перед сохранением
+                string hashedPassword = GetHash(PasswordBoxFirst.Password);
 
-                // Временная заглушка (без БД)
-                MessageBox.Show($"Пользователь успешно зарегистрирован!\n" +
-                              $"Логин: {txtbxLog.Text}\n" +
-                              $"ФИО: {txtbxFIO.Text}\n" +
-                              $"Роль: {comboBxRole.Text}\n" +
-                              $"Хэш пароля: {hashedPassword}");
-
-                // Раскомментировать при подключении реальной БД
-                /*
-                using (Entities db = new Entities())
+                using (var db = new Khakimova_DB_PaymentEntities())
                 {
                     // Проверка существования логина
-                    var existingUser = db.Users
+                    var existingUser = db.User
                         .AsNoTracking()
-                        .FirstOrDefault(u => u.Login == txtbxLog.Text);
-                        
+                        .FirstOrDefault(u => u.Login == TextBoxLogin.Text);
+
                     if (existingUser != null)
                     {
                         MessageBox.Show("Пользователь с таким логином уже существует!");
                         return;
                     }
 
-                    Users userObject = new Users
+                    string selectedRole = "User";
+                    var selectedItem = ComboBoxRole.SelectedItem as ComboBoxItem;
+                    if (selectedItem != null)
                     {
-                        FIO = txtbxFIO.Text,
-                        Login = txtbxLog.Text,
-                        Password = hashedPassword, // Сохраняем хеш пароля
-                        Role = comboBxRole.Text
-                    };
-                    
-                    db.Users.Add(userObject);
-                    db.SaveChanges();
-                    
-                    MessageBox.Show("Пользователь успешно зарегистрирован!");
-                }
-                */
+                        selectedRole = selectedItem.Content.ToString();
+                    }
 
-                // Очистка полей после успешной регистрации
-                txtbxLog.Clear();
-                passBxFrst.Clear();
-                passBxScnd.Clear();
-                comboBxRole.SelectedIndex = 0;
-                txtbxFIO.Clear();
+                    User userObject = new User
+                    {
+                        FIO = TextBoxFullName.Text,
+                        Login = TextBoxLogin.Text,
+                        Password = hashedPassword,
+                        Role = selectedRole
+                    };
+
+                    db.User.Add(userObject);
+                    db.SaveChanges();
+
+                    MessageBox.Show("Пользователь успешно зарегистрирован!");
+
+                    // Очистка полей после успешной регистрации
+                    TextBoxLogin.Clear();
+                    PasswordBoxFirst.Clear();
+                    PasswordBoxSecond.Clear();
+                    ComboBoxRole.SelectedIndex = 0;
+                    TextBoxFullName.Clear();
+                }
             }
             catch (Exception ex)
             {
