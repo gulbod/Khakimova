@@ -1,23 +1,165 @@
 ﻿<Window x:Class="Khakimova.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Theme Switcher" Height="400" Width="600">
+        Title="Theme Switcher" Height="500" Width="800"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource WindowBackground}">
+
+    <Window.Resources>
+        <!-- Стиль для карточек выбора темы -->
+        <Style x:Key="ThemeCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource CardBackground}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="15"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <!-- Стиль для кнопки Вход -->
+        <Style x:Key="LoginButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="140"/>
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="{DynamicResource LoginButtonBackground}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"
+                                            Margin="10,5"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource LoginButtonHover}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource LoginButtonPressed}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Панель выбора темы -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
-            <TextBlock Text="Выберите тему: " VerticalAlignment="Center" Margin="10,0"/>
-            <RadioButton x:Name="LightThemeRadio" Content="Светлая тема" GroupName="Theme" 
-                        IsChecked="True" Checked="ThemeRadioButton_Checked" Margin="10"/>
-            <RadioButton x:Name="DarkThemeRadio" Content="Темная тема" GroupName="Theme" 
-                        Checked="ThemeRadioButton_Checked" Margin="10"/>
-            <Button x:Name="ToAuth" Content="Log In" Click="ToAuthPage_btn" Margin="10" Width="110" Height="60"/>
-        </StackPanel>
+        <!-- Стильная панель выбора темы -->
+        <Border Grid.Row="0" 
+                Background="{DynamicResource HeaderBackground}" 
+                Padding="20"
+                BorderBrush="{DynamicResource HeaderBorder}"
+                BorderThickness="0,0,0,2">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-        <Frame x:Name="Main" NavigationUIVisibility="Hidden" Navigated="Main_Navigated" Margin="0,-10,0,10"/>
+                <!-- Левая часть - выбор темы с иконками в карточках -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Выбор темы:" 
+                              FontSize="16" 
+                              FontWeight="Bold"
+                              VerticalAlignment="Center"
+                              Margin="0,0,20,0"
+                              Foreground="{DynamicResource HeaderText}"/>
+
+                    <!-- Карточка светлой темы -->
+                    <Border Style="{StaticResource ThemeCardStyle}">
+                        <RadioButton x:Name="LightThemeRadio" 
+                                    GroupName="Theme" 
+                                    IsChecked="True" 
+                                    Checked="ThemeRadioButton_Checked"
+                                    BorderThickness="0"
+                                    Background="Transparent">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <!-- Иконка солнца -->
+                                <Viewbox Width="24" Height="24" Margin="0,0,10,0">
+                                    <Path Data="M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7Z" 
+                                          Fill="{DynamicResource SunIconFill}"
+                                          Stroke="{DynamicResource SunIconStroke}"
+                                          StrokeThickness="1"/>
+                                </Viewbox>
+                                <StackPanel>
+                                    <TextBlock Text="Светлая" 
+                                              FontSize="13"
+                                              FontWeight="SemiBold"
+                                              Foreground="{DynamicResource CardText}"/>
+                                    <TextBlock Text="Яркий и чистый стиль"
+                                              FontSize="10"
+                                              Foreground="{DynamicResource CardSecondaryText}"
+                                              Margin="0,2,0,0"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </RadioButton>
+                    </Border>
+
+                    <!-- Карточка темной темы -->
+                    <Border Style="{StaticResource ThemeCardStyle}">
+                        <RadioButton x:Name="DarkThemeRadio" 
+                                    GroupName="Theme" 
+                                    Checked="ThemeRadioButton_Checked"
+                                    BorderThickness="0"
+                                    Background="Transparent">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <!-- Иконка луны -->
+                                <Viewbox Width="24" Height="24" Margin="0,0,10,0">
+                                    <Path Data="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.36,12.31 6.2,9.5 6.04,6.68C3.23,9.82 3.34,14.64 6.35,17.66C9.37,20.67 14.19,20.78 17.33,17.97Z" 
+                                          Fill="{DynamicResource MoonIconFill}"/>
+                                </Viewbox>
+                                <StackPanel>
+                                    <TextBlock Text="Темная" 
+                                              FontSize="13"
+                                              FontWeight="SemiBold"
+                                              Foreground="{DynamicResource CardText}"/>
+                                    <TextBlock Text="Комфорт для глаз"
+                                              FontSize="10"
+                                              Foreground="{DynamicResource CardSecondaryText}"
+                                              Margin="0,2,0,0"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </RadioButton>
+                    </Border>
+                </StackPanel>
+
+                <!-- Центральная часть - стильная кнопка Вход -->
+                <Button x:Name="ToAuth" 
+                       Grid.Column="1" 
+                       Content="Вход" 
+                       Click="ToAuthPage_btn" 
+                       Style="{StaticResource LoginButtonStyle}"
+                       Margin="30,0">
+                    <Button.Effect>
+                        <DropShadowEffect ShadowDepth="3" Opacity="0.4" BlurRadius="8" Direction="270"/>
+                    </Button.Effect>
+                </Button>
+
+                <!-- Правая часть - информация -->
+                <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                   
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Основной контент -->
+        <Frame x:Name="Main" 
+               Grid.Row="1" 
+               NavigationUIVisibility="Hidden" 
+               Navigated="Main_Navigated"
+               Background="{DynamicResource ContentBackground}"/>
     </Grid>
 </Window>

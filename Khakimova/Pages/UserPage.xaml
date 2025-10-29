@@ -3,7 +3,99 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="clr-namespace:Khakimova.Pages"
       Title="User Page"
-      Loaded="Page_Loaded" Height="319" Width="1060">
+      Loaded="Page_Loaded" 
+      Height="600" 
+      Width="1200"
+      Background="{DynamicResource ContentBackground}">
+
+    <Page.Resources>
+        <!-- Стили для кнопок -->
+        <Style x:Key="BlueButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{DynamicResource LoginButtonBackground}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"
+                                            Margin="10,5"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource LoginButtonHover}"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource LoginButtonPressed}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Стиль для карточек пользователей - уменьшен размер -->
+        <Style x:Key="UserCardStyle" TargetType="Border">
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="Padding" Value="6"/>
+            <Setter Property="Background" Value="{DynamicResource CardBackground}"/>
+            <Setter Property="Width" Value="150"/>
+            <Setter Property="Height" Value="220"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="{DynamicResource LoginButtonBackground}"/>
+                    <Setter Property="Background" Value="{DynamicResource HeaderBackground}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Стиль для текстовых блоков -->
+        <Style x:Key="FilterLabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Foreground" Value="{DynamicResource CardText}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,0,0,2"/>
+        </Style>
+
+        <!-- Стиль для полей ввода -->
+        <Style x:Key="FilterInputStyle" TargetType="TextBox">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="{DynamicResource CardBackground}"/>
+            <Setter Property="Foreground" Value="{DynamicResource CardText}"/>
+        </Style>
+
+        <Style x:Key="FilterComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="{DynamicResource CardBackground}"/>
+            <Setter Property="Foreground" Value="{DynamicResource CardText}"/>
+        </Style>
+
+        <!-- Стиль для CheckBox -->
+        <Style x:Key="FilterCheckBoxStyle" TargetType="CheckBox">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{DynamicResource CardText}"/>
+        </Style>
+
+        <!-- Конвертер для изображений -->
+        <local:PathToImageConverter x:Key="PathToImageConverter"/>
+    </Page.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -11,141 +103,157 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Панель фильтров - компактная версия -->
-        <Border Grid.Row="0" Background="#F5F5F5" Padding="8" Margin="5,10,5,5">
+        <!-- Панель фильтров -->
+        <Border Grid.Row="0" 
+                Background="{DynamicResource HeaderBackground}" 
+                Padding="10" 
+                Margin="8,8,8,4" 
+                BorderBrush="{DynamicResource CardBorder}" 
+                BorderThickness="1" 
+                CornerRadius="6">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 
                 <!-- Поиск по ФИО -->
-                <StackPanel Orientation="Vertical" Margin="5,0" Width="150">
-                    <TextBlock Text="Поиск по ФИО:" FontSize="11" Foreground="Gray" Margin="0,0,0,2" Height="20" Width="122"/>
+                <StackPanel Orientation="Vertical" Margin="8,0" Width="180">
+                    <TextBlock Text="Поиск по ФИО:" Style="{StaticResource FilterLabelStyle}"/>
                     <TextBox x:Name="FioFilterTextBox" 
+                             Style="{StaticResource FilterInputStyle}"
                              TextChanged="FioFilterTextBox_TextChanged"
-                             ToolTip="Введите ФИО для поиска пользователей"
-                             FontSize="12" Height="25" Width="118"/>
+                             ToolTip="Введите ФИО для поиска пользователей"/>
                 </StackPanel>
 
                 <!-- Сортировка -->
-                <StackPanel Orientation="Vertical" Margin="10,0" Width="130">
-                    <TextBlock Text="Сортировка:" FontSize="11" Foreground="Gray" Margin="0,0,0,2"/>
+                <StackPanel Orientation="Vertical" Margin="12,0" Width="140">
+                    <TextBlock Text="Сортировка:" Style="{StaticResource FilterLabelStyle}"/>
                     <ComboBox x:Name="SortComboBox" 
+                              Style="{StaticResource FilterComboBoxStyle}"
                               SelectionChanged="SortComboBox_SelectionChanged"
-                              SelectedIndex="0" 
-                              FontSize="12" Height="25">
+                              SelectedIndex="0">
                         <ComboBoxItem Content="А-Я"/>
                         <ComboBoxItem Content="Я-А"/>
                     </ComboBox>
                 </StackPanel>
 
                 <!-- Фильтр по роли -->
-                <StackPanel Orientation="Vertical" Margin="10,0" VerticalAlignment="Center">
+                <StackPanel Orientation="Vertical" Margin="12,0" VerticalAlignment="Center">
                     <CheckBox x:Name="OnlyAdminCheckBox" 
                               Content="Только админы" 
                               Checked="OnlyAdminCheckBox_Checked" 
                               Unchecked="OnlyAdminCheckBox_Unchecked"
-                              FontSize="11"
+                              Style="{StaticResource FilterCheckBoxStyle}"
                               ToolTip="Показать только администраторов"/>
                 </StackPanel>
 
-                <!-- Кнопки -->
-                <StackPanel Orientation="Horizontal" Margin="15,0"/>
+                <!-- Кнопки действий -->
+                <StackPanel Orientation="Horizontal" Margin="15,0">
+                    <Button x:Name="RefreshButton" Content="🔄 Обновить" Click="RefreshButton_Click"
+                            Style="{StaticResource BlueButtonStyle}" Width="100" Margin="4,0"/>
+                    <Button x:Name="BackButton" Content="← Назад" Click="BackButton_Click"
+                            Style="{StaticResource BlueButtonStyle}" Width="80" Margin="4,0"/>
+                </StackPanel>
 
             </StackPanel>
         </Border>
 
         <!-- Список пользователей -->
-        <ListView Name="ListUser" 
-                  Grid.Row="1" 
-                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                  ScrollViewer.VerticalScrollBarVisibility="Auto"
-                  Margin="5,5,5,0"
-                  MouseDoubleClick="ListUser_MouseDoubleClick">
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
+        <Border Grid.Row="1" 
+                Background="{DynamicResource CardBackground}" 
+                Margin="8,4,8,8" 
+                BorderBrush="{DynamicResource CardBorder}" 
+                BorderThickness="1" 
+                CornerRadius="8">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <ListView Name="ListUser" 
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                          Margin="4"
+                          MouseDoubleClick="ListUser_MouseDoubleClick"
+                          Background="Transparent">
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
 
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Border BorderBrush="LightGray" 
-                            BorderThickness="1" 
-                            CornerRadius="5" 
-                            Margin="3" 
-                            Padding="3"
-                            Background="White"
-                            Width="180"
-                            Height="280">
-                        <Grid Margin="2">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource UserCardStyle}">
+                                <Grid Margin="1">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
 
-                            <!-- ФИО -->
-                            <TextBlock Grid.Row="0" 
-                                       Text="{Binding FIO}" 
-                                       FontSize="12" 
-                                       FontWeight="SemiBold"
-                                       TextWrapping="Wrap" 
-                                       TextAlignment="Center"
-                                       MaxHeight="35"
-                                       Margin="2"/>
+                                    <!-- ФИО -->
+                                    <TextBlock Grid.Row="0" 
+                                               Text="{Binding FIO}" 
+                                               FontSize="11" 
+                                               FontWeight="SemiBold"
+                                               TextWrapping="Wrap" 
+                                               TextAlignment="Center"
+                                               MaxHeight="30"
+                                               Margin="1"
+                                               Foreground="{DynamicResource CardText}"/>
 
-                            <!-- Фотография -->
-                            <Border Grid.Row="1" 
-                                    BorderBrush="#E0E0E0" 
-                                    BorderThickness="1" 
-                                    Margin="5"
-                                    Background="#F8F8F8"
-                                    Height="150">
-                                <Image Stretch="Uniform" 
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center">
-                                    <Image.Source>
-                                        <Binding Path="PhotoData">
-                                            <Binding.Converter>
-                                                <local:ByteArrayToImageConverter/>
-                                            </Binding.Converter>
-                                        </Binding>
-                                    </Image.Source>
-                                </Image>
+                                    <!-- Фотография -->
+                                    <Border Grid.Row="1" 
+                                            BorderBrush="{DynamicResource CardBorder}" 
+                                            BorderThickness="1" 
+                                            Margin="3"
+                                            Background="{DynamicResource HeaderBackground}"
+                                            Height="120"
+                                            CornerRadius="3">
+                                        <Image Stretch="Uniform" 
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center">
+                                            <Image.Source>
+                                                <Binding Path="Photo">
+                                                    <Binding.Converter>
+                                                        <local:PathToImageConverter/>
+                                                    </Binding.Converter>
+                                                </Binding>
+                                            </Image.Source>
+                                        </Image>
+                                    </Border>
+
+                                    <!-- Роль -->
+                                    <Border Grid.Row="2" 
+                                            Background="{Binding Role, Converter={x:Static local:RoleToColorConverter.Instance}}"
+                                            CornerRadius="3" 
+                                            Margin="3,1"
+                                            Padding="3,1">
+                                        <TextBlock Text="{Binding Role}" 
+                                                   FontSize="9" 
+                                                   FontWeight="Bold"
+                                                   Foreground="White"
+                                                   TextAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Логин -->
+                                    <TextBlock Grid.Row="3" 
+                                               Text="{Binding Login}" 
+                                               FontSize="9" 
+                                               Foreground="{DynamicResource CardSecondaryText}"
+                                               TextAlignment="Center"
+                                               Margin="1"
+                                               FontWeight="SemiBold"/>
+
+                                    <!-- ID -->
+                                    <TextBlock Grid.Row="4" 
+                                               Text="{Binding ID, StringFormat='ID: {0}'}" 
+                                               FontSize="8" 
+                                               Foreground="{DynamicResource CardSecondaryText}"
+                                               TextAlignment="Center"
+                                               Margin="1"/>
+                                </Grid>
                             </Border>
-
-                            <!-- Роль -->
-                            <Border Grid.Row="2" 
-                                    Background="{Binding Role, Converter={x:Static local:RoleToColorConverter.Instance}}"
-                                    CornerRadius="3" 
-                                    Margin="5,2"
-                                    Padding="3,1">
-                                <TextBlock Text="{Binding Role}" 
-                                           FontSize="11" 
-                                           FontWeight="Bold"
-                                           Foreground="White"
-                                           TextAlignment="Center"/>
-                            </Border>
-
-                            <!-- Логин -->
-                            <TextBlock Grid.Row="3" 
-                                       Text="{Binding Login}" 
-                                       FontSize="10" 
-                                       Foreground="Gray"
-                                       TextAlignment="Center"
-                                       Margin="2"/>
-
-                            <!-- ID -->
-                            <TextBlock Grid.Row="4" 
-                                       Text="{Binding ID, StringFormat='ID: {0}'}" 
-                                       FontSize="9" 
-                                       Foreground="Silver"
-                                       TextAlignment="Center"
-                                       Margin="2"/>
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </ScrollViewer>
+        </Border>
     </Grid>
 </Page>

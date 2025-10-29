@@ -1,64 +1,169 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <!-- Цвета сине-фиолетовой темы -->
+    <Color x:Key="BackgroundColor">#FF1A1A2E</Color>
+    <Color x:Key="ForegroundColor">#FF00D4FF</Color>
+    <Color x:Key="AccentColor">#FF6A0DAD</Color>
+    <Color x:Key="HeaderBackgroundColor">#FF16213E</Color>
+    <Color x:Key="HeaderBorderColor">#FF0F3460</Color>
+    <Color x:Key="CardBackgroundColor">#FF22223D</Color>
+    <Color x:Key="CardBorderColor">#FF3D2C6E</Color>
+    <Color x:Key="LoginButtonColor">#FF6A0DAD</Color>
+    <Color x:Key="LoginButtonHoverColor">#FF8A2BE2</Color>
+    <Color x:Key="LoginButtonPressedColor">#FF4B0082</Color>
+    <Color x:Key="SunIconColor">#FF00D4FF</Color>
+    <Color x:Key="MoonIconColor">#FF9370DB</Color>
+    <Color x:Key="HintTextColor">#FF40E0D0</Color>
 
+    <!-- SolidColorBrush определения -->
+    <SolidColorBrush x:Key="WindowBackground" Color="{DynamicResource BackgroundColor}"/>
+    <SolidColorBrush x:Key="ContentBackground" Color="{DynamicResource BackgroundColor}"/>
+    <SolidColorBrush x:Key="ForegroundBrush" Color="{DynamicResource ForegroundColor}"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="{DynamicResource AccentColor}"/>
+    <SolidColorBrush x:Key="HeaderBackground" Color="{DynamicResource HeaderBackgroundColor}"/>
+    <SolidColorBrush x:Key="HeaderBorder" Color="{DynamicResource HeaderBorderColor}"/>
+    <SolidColorBrush x:Key="HeaderText" Color="{DynamicResource ForegroundColor}"/>
+    <SolidColorBrush x:Key="SecondaryText" Color="#FF40E0D0"/>
+    <SolidColorBrush x:Key="HintText" Color="{DynamicResource HintTextColor}"/>
+
+    <!-- Цвета для карточек -->
+    <SolidColorBrush x:Key="CardBackground" Color="{DynamicResource CardBackgroundColor}"/>
+    <SolidColorBrush x:Key="CardBorder" Color="{DynamicResource CardBorderColor}"/>
+    <SolidColorBrush x:Key="CardText" Color="{DynamicResource ForegroundColor}"/>
+    <SolidColorBrush x:Key="CardSecondaryText" Color="#FF7DF9FF"/>
+
+    <!-- Цвета для кнопки входа -->
+    <SolidColorBrush x:Key="LoginButtonBackground" Color="{DynamicResource LoginButtonColor}"/>
+    <SolidColorBrush x:Key="LoginButtonHover" Color="{DynamicResource LoginButtonHoverColor}"/>
+    <SolidColorBrush x:Key="LoginButtonPressed" Color="{DynamicResource LoginButtonPressedColor}"/>
+
+    <!-- Цвета для иконок -->
+    <SolidColorBrush x:Key="SunIconFill" Color="{DynamicResource SunIconColor}"/>
+    <SolidColorBrush x:Key="SunIconStroke" Color="#FF00BFFF"/>
+    <SolidColorBrush x:Key="MoonIconFill" Color="{DynamicResource MoonIconColor}"/>
+
+    <!-- Дополнительные ресурсы для DataGrid -->
+    <SolidColorBrush x:Key="SelectedItemBackground" Color="#FF2E2E4A"/>
+    <SolidColorBrush x:Key="HoverItemBackground" Color="#FF3A3A5A"/>
+    <SolidColorBrush x:Key="SelectedItemBackgroundLight" Color="#FF4A2E8A"/>
+    <SolidColorBrush x:Key="SelectionBrushLight" Color="#664A2E8A"/>
+
+    <!-- Стиль для информационного текста -->
+    <Style x:Key="InfoTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="10"/>
+        <Setter Property="Foreground" Value="{DynamicResource HintText}"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+    </Style>
+
+    <!-- Стили для DataGrid -->
+    <Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
+        <Setter Property="Padding" Value="10,8"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CardBorder}"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="Foreground" Value="{DynamicResource CardText}"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="{DynamicResource SelectedItemBackgroundLight}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource ForegroundBrush}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="DataGridRowStyle" TargetType="DataGridRow">
+        <Setter Property="Foreground" Value="{DynamicResource CardText}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource HoverItemBackground}"/>
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="{DynamicResource SelectedItemBackground}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Базовые стили -->
     <Style TargetType="Grid">
-        <Setter Property="Background" Value="#FF2D2D30"/>
-    </Style>
-    <!-- Стиль для кнопок -->
-    <Style TargetType="Button">
-        <Setter Property="Height" Value="35"/>
-        <Setter Property="Padding" Value="8"/>
-        <Setter Property="Margin" Value="12"/>
-        <Setter Property="FontFamily" Value="Segoe UI"/>
-        <Setter Property="FontSize" Value="12pt"/>
-        <Setter Property="Background" Value="#FF2D2D30"/>
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="BorderBrush" Value="#FF007ACC"/>
-        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Background" Value="{DynamicResource WindowBackground}"/>
     </Style>
 
-    <!-- Стиль для текстовых полей -->
-    <Style TargetType="TextBox">
-        <Setter Property="Height" Value="30"/>
-        <Setter Property="Margin" Value="8"/>
-        <Setter Property="FontFamily" Value="Segoe UI"/>
-        <Setter Property="FontSize" Value="12pt"/>
-        <Setter Property="Background" Value="#FF2D2D30"/>
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="BorderBrush" Value="#FF007ACC"/>
-        <Setter Property="BorderThickness" Value="1"/>
-    </Style>
-
-    <Style TargetType="PasswordBox">
-        <Setter Property="Height" Value="30"/>
-        <Setter Property="Margin" Value="8"/>
-        <Setter Property="FontFamily" Value="Segoe UI"/>
-        <Setter Property="FontSize" Value="12pt"/>
-        <Setter Property="Background" Value="#FF2D2D30"/>
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="BorderBrush" Value="#FF007ACC"/>
-        <Setter Property="BorderThickness" Value="1"/>
-    </Style>
-
-    <!-- Стиль для текстовых блоков -->
     <Style TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
         <Setter Property="FontFamily" Value="Segoe UI"/>
-        <Setter Property="FontSize" Value="12pt"/>
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="Background" Value="#FF2D2D30"/>
-        <Setter Property="Margin" Value="8"/>
-        
     </Style>
 
     <!-- Стиль для RadioButton -->
     <Style TargetType="RadioButton">
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
         <Setter Property="FontFamily" Value="Segoe UI"/>
-        <Setter Property="FontSize" Value="11pt"/>
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="Background" Value="#FF2D2D30"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+    </Style>
 
-        <Setter Property="Margin" Value="5"/>
+    <!-- Стиль для кнопок в сине-фиолетовой теме -->
+    <Style x:Key="BlueVioletButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="{DynamicResource LoginButtonBackground}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="15,8"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Height" Value="35"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" 
+                            CornerRadius="8">
+                        <ContentPresenter HorizontalAlignment="Center" 
+                                        VerticalAlignment="Center"
+                                        Margin="10,5"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource LoginButtonHover}"/>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource LoginButtonPressed}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Стиль для полей ввода в сине-фиолетовой теме -->
+    <Style x:Key="BlueVioletInputStyle" TargetType="TextBox">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Padding" Value="8"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CardBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Background" Value="{DynamicResource CardBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource CardText}"/>
+        <Setter Property="SelectionBrush" Value="{DynamicResource SelectionBrushLight}"/>
+    </Style>
+
+    <!-- Стиль для ComboBox в сине-фиолетовой теме -->
+    <Style x:Key="BlueVioletComboBoxStyle" TargetType="ComboBox">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Padding" Value="8"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CardBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Background" Value="{DynamicResource CardBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource CardText}"/>
+    </Style>
+
+    <!-- Стиль для карточек -->
+    <Style x:Key="BlueVioletCardStyle" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource CardBackground}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CardBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="15"/>
     </Style>
 
 </ResourceDictionary>

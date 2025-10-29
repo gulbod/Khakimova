@@ -21,11 +21,21 @@ namespace Khakimova.Pages
         {
             try
             {
-                // Использовать реальную БД при подключении
                 using (var db = new Khakimova_DB_PaymentEntities())
                 {
                     var currentUsers = db.User.ToList();
-                    ListUser.ItemsSource = currentUsers;
+
+                    // Если в базе нет пользователей, загружаем демо-данные
+                    if (!currentUsers.Any())
+                    {
+                        LoadDemoUsers();
+                    }
+                    else
+                    {
+                        ListUser.ItemsSource = currentUsers;
+                        // Показываем сколько пользователей загружено
+                        ShowUserCount(currentUsers.Count);
+                    }
                 }
             }
             catch (Exception ex)
@@ -51,14 +61,15 @@ namespace Khakimova.Pages
             };
 
             ListUser.ItemsSource = demoUsers;
+            ShowUserCount(demoUsers.Count);
         }
 
-        // Очистка фильтров
-        private void ClearFiltersButton_Click(object sender, RoutedEventArgs e)
+        // Показать количество пользователей
+        private void ShowUserCount(int count)
         {
-            FioFilterTextBox.Text = "";
-            SortComboBox.SelectedIndex = 0;
-            OnlyAdminCheckBox.IsChecked = false;
+            // Можно добавить отображение количества пользователей в интерфейсе
+            // Например, в заголовок или статусную строку
+            Title = $"Пользователи ({count} чел.)";
         }
 
         // Обработчики фильтров
@@ -94,7 +105,7 @@ namespace Khakimova.Pages
             {
                 List<User> currentUsers;
 
-                // Использовать реальную БД при подключении
+                // Всегда загружаем актуальные данные из базы
                 using (var db = new Khakimova_DB_PaymentEntities())
                 {
                     currentUsers = db.User.ToList();
@@ -104,7 +115,7 @@ namespace Khakimova.Pages
                 if (!string.IsNullOrWhiteSpace(FioFilterTextBox.Text))
                 {
                     currentUsers = currentUsers.Where(x =>
-                        x.FIO.ToLower().Contains(FioFilterTextBox.Text.ToLower())).ToList();
+                        x.FIO != null && x.FIO.ToLower().Contains(FioFilterTextBox.Text.ToLower())).ToList();
                 }
 
                 // Фильтрация по роли
@@ -124,11 +135,25 @@ namespace Khakimova.Pages
                 }
 
                 ListUser.ItemsSource = currentUsers;
+                ShowUserCount(currentUsers.Count);
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка при обновлении списка: {ex.Message}");
-                LoadDemoUsers();
+                // При ошибке загружаем демо-данные
+                try
+                {
+                    using (var db = new Khakimova_DB_PaymentEntities())
+                    {
+                        var users = db.User.ToList();
+                        ListUser.ItemsSource = users;
+                        ShowUserCount(users.Count);
+                    }
+                }
+                catch
+                {
+                    LoadDemoUsers();
+                }
             }
         }
 
@@ -139,21 +164,6 @@ namespace Khakimova.Pages
             {
                 // Переход на страницу редактирования при двойном клике
                 NavigationService?.Navigate(new AddUserPage(selectedUser));
-            }
-        }
-
-        // Кнопка редактирования пользователя
-        private void EditUserButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (ListUser.SelectedItem is User selectedUser)
-            {
-                // Переход на страницу редактирования пользователя
-                NavigationService?.Navigate(new AddUserPage(selectedUser));
-            }
-            else
-            {
-                MessageBox.Show("Выберите пользователя для редактирования!", "Внимание",
-                              MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -168,9 +178,6 @@ namespace Khakimova.Pages
             {
                 MessageBox.Show("Нет предыдущей страницы для возврата.", "Информация",
                               MessageBoxButton.OK, MessageBoxImage.Information);
-
-                // Если нельзя вернуться назад, можно перейти на главную страницу
-                // NavigationService?.Navigate(new MainPage());
             }
         }
 
@@ -189,24 +196,27 @@ namespace Khakimova.Pages
         }
     }
 
-    // Конвертер для преобразования массива байтов в изображение
-    public class ByteArrayToImageConverter : System.Windows.Data.IValueConverter
+    // Конвертер для преобразования пути к изображению в BitmapImage
+    public class PathToImageConverter : System.Windows.Data.IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value is byte[] byteArray && byteArray.Length > 0)
+            if (value is string photoFileName && !string.IsNullOrEmpty(photoFileName))
             {
                 try
                 {
-                    var image = new BitmapImage();
-                    using (var stream = new MemoryStream(byteArray))
+                    string photosDirectory = Path.Combine(Directory.GetCurrentDirectory(), "UserPhotos");
+                    string photoPath = Path.Combine(photosDirectory, photoFileName);
+
+                    if (File.Exists(photoPath))
                     {
+                        var image = new BitmapImage();
                         image.BeginInit();
                         image.CacheOption = BitmapCacheOption.OnLoad;
-                        image.StreamSource = stream;
+                        image.UriSource = new Uri(photoPath);
                         image.EndInit();
+                        return image;
                     }
-                    return image;
                 }
                 catch
                 {
@@ -223,16 +233,7 @@ namespace Khakimova.Pages
 
         private BitmapImage GetDefaultImage()
         {
-            // Возвращает изображение-заглушку
-            try
-            {
-                return new BitmapImage(new Uri("pack://application:,,,/Images/default.png"));
-            }
-            catch
-            {
-                // Если изображение не найдено, создаем простой серый квадрат
-                return CreateDefaultImage();
-            }
+            return CreateDefaultImage();
         }
 
         private BitmapImage CreateDefaultImage()
@@ -244,10 +245,19 @@ namespace Khakimova.Pages
             using (var context = visual.RenderOpen())
             {
                 context.DrawRectangle(Brushes.LightGray, null, new Rect(0, 0, width, height));
-                var text = new FormattedText("No Image",
+
+                var text = new FormattedText(
+                    "No Image",
                     System.Globalization.CultureInfo.CurrentCulture,
                     System.Windows.FlowDirection.LeftToRight,
-                    new Typeface("Arial"), 10, Brushes.Gray);
+                    new Typeface("Arial"),
+                    10,
+                    Brushes.Gray,
+                    96)
+                {
+                    TextAlignment = TextAlignment.Center
+                };
+
                 context.DrawText(text, new Point(width / 2 - text.Width / 2, height / 2 - text.Height / 2));
             }
 

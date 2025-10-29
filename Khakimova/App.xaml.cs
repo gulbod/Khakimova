@@ -8,10 +8,32 @@ using System.Windows;
 
 namespace Khakimova
 {
-    /// <summary>
-    /// Логика взаимодействия для App.xaml
-    /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            // Загружаем тему по умолчанию при запуске
+            LoadDefaultTheme();
+        }
+
+        private void LoadDefaultTheme()
+        {
+            try
+            {
+                // Загружаем светлую тему по умолчанию
+                Uri uri = new Uri("DictionaryLight.xaml", UriKind.Relative);
+                ResourceDictionary resourceDict = LoadComponent(uri) as ResourceDictionary;
+
+                Current.Resources.MergedDictionaries.Clear();
+                Current.Resources.MergedDictionaries.Add(resourceDict);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка загрузки темы: {ex.Message}", "Ошибка",
+                              MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
     }
 }

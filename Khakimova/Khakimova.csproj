@@ -75,16 +75,23 @@
     <Compile Include="Pages\AddCategoryPage.xaml.cs">
       <DependentUpon>AddCategoryPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\AddPaymentPage.xaml.cs">
+      <DependentUpon>AddPaymentPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\AddUserPage.xaml.cs">
       <DependentUpon>AddUserPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\BasePage.cs" />
+    <Compile Include="Pages\DataManager.cs" />
     <Compile Include="Pages\Category.cs" />
     <Compile Include="Pages\CategoryTabPage.xaml.cs">
       <DependentUpon>CategoryTabPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Converters.cs" />
     <Compile Include="Pages\PaymentTabPage.xaml.cs">
       <DependentUpon>PaymentTabPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\ThemeManager.cs" />
     <Compile Include="Payment.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -112,6 +119,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Pages\AddCategoryPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\AddPaymentPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

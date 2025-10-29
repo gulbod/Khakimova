@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Data.Entity;
 
 namespace Khakimova.Pages
 {
@@ -174,6 +175,21 @@ namespace Khakimova.Pages
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка при регистрации: {ex.Message}");
+            }
+        }
+
+        // Обработчик кнопки "Назад"
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Возврат на предыдущую страницу
+            if (NavigationService.CanGoBack)
+            {
+                NavigationService.GoBack();
+            }
+            else
+            {
+                // Если нет истории навигации, переходим на главную страницу
+                NavigationService.Navigate(new AuthPage());
             }
         }
     }

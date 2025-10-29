@@ -4,10 +4,6 @@
              xmlns:local="clr-namespace:Khakimova"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/DictionaryLight.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        <!-- Ресурсы будут загружаться динамически -->
     </Application.Resources>
 </Application>

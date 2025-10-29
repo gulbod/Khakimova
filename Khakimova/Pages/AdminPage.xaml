@@ -1,74 +1,117 @@
 ﻿<Page x:Class="Khakimova.Pages.AdminPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      Title="Admin Page">
+      Title="Admin Page" Height="645" Width="567"
+      Background="{DynamicResource ContentBackground}">
 
-    <Grid Background="White">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="543*"/>
-            <ColumnDefinition Width="88*"/>
-        </Grid.ColumnDefinitions>
+    <Page.Resources>
+        <!-- Стиль для кнопок -->
+        <Style x:Key="BlueButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{DynamicResource LoginButtonBackground}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"
+                                            Margin="10,5"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource LoginButtonHover}"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource LoginButtonPressed}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Стиль для текстовых блоков -->
+        <Style x:Key="TextBlockStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{DynamicResource CardText}"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Стиль для заголовков -->
+        <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{DynamicResource HeaderText}"/>
+            <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+        </Style>
+    </Page.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
         <!-- Заголовок -->
         <TextBlock Text="Панель администратора" 
-                   HorizontalAlignment="Left" 
-                   VerticalAlignment="Top" 
-                   FontSize="24" 
-                   FontWeight="Bold" 
-                   Margin="163,50,0,0"
-                   Foreground="DarkBlue"/>
+                   Grid.Row="0" 
+                   Style="{StaticResource HeaderTextStyle}"
+                   Margin="0,10,0,20"
+                   HorizontalAlignment="Center"/>
 
-        <!-- Кнопки навигации -->
-        <Button x:Name="BtnTab1" 
-                Content="Таблица пользователей" 
-                HorizontalAlignment="Left" 
-                Margin="18,160,0,137" 
-                Height="NaN" 
-                Width="221" 
-                Click="BtnTab1_Click"
-                FontSize="14"
-                Background="LightBlue"
-                BorderBrush="DarkBlue"/>
+        <!-- Панель кнопок -->
+        <Border Grid.Row="1" 
+                Background="{DynamicResource HeaderBackground}" 
+                CornerRadius="8" 
+                Margin="10,0,10,10"
+                VerticalAlignment="Top">
+            <StackPanel Orientation="Horizontal" 
+                        HorizontalAlignment="Center" 
+                        Margin="10" 
+                        Height="50"
+                        VerticalAlignment="Center">
+                <Button x:Name="BtnTab1" 
+                        Content="Пользователи" 
+                        Click="BtnTab1_Click" 
+                        Style="{StaticResource BlueButtonStyle}"
+                        Height="40" 
+                        Width="120"
+                        FontSize="14"
+                        Margin="5"/>
+                <Button x:Name="BtnTab2" 
+                        Content="Категории" 
+                        Click="BtnTab2_Click" 
+                        Style="{StaticResource BlueButtonStyle}"
+                        Height="40" 
+                        Width="120"
+                        FontSize="14"
+                        Margin="5"/>
+                <Button x:Name="BtnTab3" 
+                        Content="Платежи" 
+                        Click="BtnTab3_Click" 
+                        Style="{StaticResource BlueButtonStyle}"
+                        Height="40" 
+                        Width="120"
+                        FontSize="14"
+                        Margin="5"/>
+                <Button x:Name="BtnTab4" 
+                        Content="Диаграммы" 
+                        Click="BtnTab4_Click" 
+                        Style="{StaticResource BlueButtonStyle}"
+                        Height="40" 
+                        Width="120"
+                        FontSize="14"
+                        Margin="5"/>
+            </StackPanel>
+        </Border>
 
-        <Button x:Name="BtnTab2" 
-                Content="Таблица категорий" 
-                HorizontalAlignment="Left" 
-                Margin="253,0,0,137" 
-                Height="65" 
-                Width="190" 
-                Click="BtnTab2_Click"
-                FontSize="16"
-                Background="LightGreen"
-                BorderBrush="DarkGreen" VerticalAlignment="Bottom"/>
-
-        <Button x:Name="BtnTab3" 
-                Content="Таблица платежей" 
-                Margin="459,160,0,137" 
-                Height="NaN" 
-                Width="172" 
-                Click="BtnTab3_Click"
-                FontSize="14"
-                Background="LightCoral"
-                BorderBrush="DarkRed" HorizontalAlignment="Left" Grid.ColumnSpan="2"/>
-
-        <Button x:Name="BtnTab4" 
-                Content="Диаграммы и отчеты" 
-                HorizontalAlignment="Left" 
-                Margin="254,306,0,0" 
-                VerticalAlignment="Top" 
-                Height="56" 
-                Width="262" 
-                Click="BtnTab4_Click"
-                FontSize="14"
-                Background="Gold"
-                BorderBrush="DarkGoldenrod"/>
-
-        <!-- Информационный текст -->
-        <TextBlock Text="Выберите раздел для управления системой" 
-                   HorizontalAlignment="Left" 
-                   VerticalAlignment="Top" 
-                   FontSize="16" 
-                   Margin="154,100,0,0"
-                   Foreground="Gray"/>
+        <!-- Контент страницы будет отображаться здесь -->
+        <Frame x:Name="ContentFrame" Grid.Row="1" Margin="10,70,10,10"/>
     </Grid>
 </Page>

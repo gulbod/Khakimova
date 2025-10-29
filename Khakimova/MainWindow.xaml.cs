@@ -2,7 +2,6 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Navigation;
 
 namespace Khakimova
 {
@@ -62,9 +61,9 @@ namespace Khakimova
             Main.Content = new AuthPage();
         }
 
-        private void Main_Navigated(object sender, NavigationEventArgs e)
+        private void Main_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
         {
-
+            // Логика обработки навигации
         }
     }
 }

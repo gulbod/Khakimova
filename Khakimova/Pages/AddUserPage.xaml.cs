@@ -1,190 +1,255 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 using Microsoft.Win32;
-using System.IO;
 
 namespace Khakimova.Pages
 {
     public partial class AddUserPage : Page
     {
-        private User _currentUser = new User();
-        private string _selectedPhotoPath = "";
+        private readonly User _currentUser;
+        private string _photoFileName;
+        private byte[] _imageData;
+        private readonly string _photosDirectory;
 
-        public AddUserPage(User selectedUser)
+        public AddUserPage(User selectedUser = null)
         {
             InitializeComponent();
+            _currentUser = selectedUser;
+            _photosDirectory = Path.Combine(Directory.GetCurrentDirectory(), "UserPhotos");
 
-            if (selectedUser != null)
+            if (!Directory.Exists(_photosDirectory))
             {
-                _currentUser = selectedUser;
+                Directory.CreateDirectory(_photosDirectory);
+            }
 
-                // Установка выбранной роли в ComboBox
-                foreach (ComboBoxItem item in cmbRole.Items)
+            if (_currentUser != null)
+            {
+                LoadUserData();
+            }
+            else
+            {
+                ClearForm();
+            }
+        }
+
+        private void LoadUserData()
+        {
+            try
+            {
+                LoginTextBox.Text = _currentUser.Login;
+                FioTextBox.Text = _currentUser.FIO;
+
+                // Установка роли
+                foreach (ComboBoxItem item in RoleComboBox.Items)
                 {
-                    if (item.Content.ToString() == _currentUser.Role)
+                    if (item.Content?.ToString() == _currentUser.Role)
                     {
-                        cmbRole.SelectedItem = item;
+                        RoleComboBox.SelectedItem = item;
                         break;
                     }
                 }
 
-                // Загрузка существующего фото
+                // Загрузка фото
                 if (!string.IsNullOrEmpty(_currentUser.Photo))
                 {
-                    LoadUserImage(_currentUser.Photo);
+                    _photoFileName = _currentUser.Photo;
+                    LoadImageFromFile(_photoFileName);
+                    PhotoNameTextBlock.Text = $"Фото: {Path.GetFileName(_photoFileName)}";
+                    NoImagePreviewText.Visibility = Visibility.Collapsed;
                 }
+                else
+                {
+                    ClearImage();
+                }
+
+                Title = "Редактирование пользователя";
             }
-
-            DataContext = _currentUser;
-
-            // Если роль не установлена, выбираем первую по умолчанию
-            if (cmbRole.SelectedItem == null && cmbRole.Items.Count > 0)
+            catch (Exception ex)
             {
-                cmbRole.SelectedIndex = 0;
+                MessageBox.Show($"Ошибка загрузки данных пользователя: {ex.Message}");
             }
         }
 
-        private void ButtonSelectPhoto_Click(object sender, RoutedEventArgs e)
+        private void ClearForm()
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Image files (*.jpg; *.jpeg; *.png; *.bmp)|*.jpg; *.jpeg; *.png; *.bmp|All files (*.*)|*.*";
-            openFileDialog.FilterIndex = 1;
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                _selectedPhotoPath = openFileDialog.FileName;
-                TBPhotoName.Text = Path.GetFileName(_selectedPhotoPath);
-                LoadUserImage(_selectedPhotoPath);
-            }
+            LoginTextBox.Clear();
+            FioTextBox.Clear();
+            RoleComboBox.SelectedIndex = -1;
+            ClearImage();
+            PhotoNameTextBlock.Text = "Фото не выбрано";
+            Title = "Добавление пользователя";
         }
 
-        private void LoadUserImage(string imagePath)
+        private void ClearImage()
+        {
+            UserPhotoImage.Source = null;
+            _photoFileName = null;
+            _imageData = null;
+            NoImagePreviewText.Visibility = Visibility.Visible;
+        }
+
+        private void SelectPhotoButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (File.Exists(imagePath))
+                var openFileDialog = new OpenFileDialog
                 {
-                    var bitmap = new System.Windows.Media.Imaging.BitmapImage();
+                    Filter = "Image files (*.jpg; *.jpeg; *.png; *.bmp)|*.jpg; *.jpeg; *.png; *.bmp|All files (*.*)|*.*",
+                    FilterIndex = 1
+                };
+
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    string filePath = openFileDialog.FileName;
+                    _photoFileName = filePath;
+
+                    var bitmap = new BitmapImage();
                     bitmap.BeginInit();
-                    bitmap.UriSource = new Uri(imagePath);
-                    bitmap.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
+                    bitmap.UriSource = new Uri(filePath);
                     bitmap.EndInit();
-                    UserImage.Source = bitmap;
+
+                    UserPhotoImage.Source = bitmap;
+                    NoImagePreviewText.Visibility = Visibility.Collapsed;
+
+                    _imageData = File.ReadAllBytes(filePath);
+                    PhotoNameTextBlock.Text = $"Фото: {Path.GetFileName(filePath)}";
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при выборе фото: {ex.Message}");
+            }
+        }
+
+        private void LoadImageFromFile(string fileName)
+        {
+            try
+            {
+                string filePath = Path.Combine(_photosDirectory, fileName);
+
+                if (File.Exists(filePath))
+                {
+                    var bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.UriSource = new Uri(filePath);
+                    bitmap.EndInit();
+                    UserPhotoImage.Source = bitmap;
+                    NoImagePreviewText.Visibility = Visibility.Collapsed;
+                    _photoFileName = fileName;
+                }
+                else
+                {
+                    ClearImage();
+                    PhotoNameTextBlock.Text = "Фото не найдено";
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка загрузки изображения: {ex.Message}");
+                ClearImage();
             }
         }
 
-        private string SaveUserPhoto()
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(_selectedPhotoPath) || !File.Exists(_selectedPhotoPath))
-                return _currentUser.Photo;
-
             try
             {
-                // Создаем папку для фотографий пользователей, если её нет
-                string photosDirectory = Path.Combine(Directory.GetCurrentDirectory(), "UserPhotos");
-                if (!Directory.Exists(photosDirectory))
+                // Валидация данных
+                if (string.IsNullOrWhiteSpace(LoginTextBox.Text) ||
+                    string.IsNullOrWhiteSpace(FioTextBox.Text) ||
+                    RoleComboBox.SelectedItem == null)
                 {
-                    Directory.CreateDirectory(photosDirectory);
+                    MessageBox.Show("Заполните все обязательные поля!", "Ошибка",
+                                  MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
                 }
 
-                // Генерируем уникальное имя файла
-                string fileExtension = Path.GetExtension(_selectedPhotoPath);
-                string fileName = $"user_{_currentUser.ID}_{DateTime.Now:yyyyMMddHHmmss}{fileExtension}";
-                string destinationPath = Path.Combine(photosDirectory, fileName);
-
-                // Копируем файл
-                File.Copy(_selectedPhotoPath, destinationPath, true);
-
-                return destinationPath;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка сохранения фотографии: {ex.Message}");
-                return _currentUser.Photo;
-            }
-        }
-
-        private void ButtonSave_Click(object sender, RoutedEventArgs e)
-        {
-            StringBuilder errors = new StringBuilder();
-
-            if (string.IsNullOrWhiteSpace(_currentUser.Login))
-                errors.AppendLine("Укажите логин!");
-            if (string.IsNullOrWhiteSpace(_currentUser.Password))
-                errors.AppendLine("Укажите пароль!");
-            if (cmbRole.SelectedItem == null)
-                errors.AppendLine("Выберите роль!");
-            else
-                _currentUser.Role = (cmbRole.SelectedItem as ComboBoxItem)?.Content.ToString();
-            if (string.IsNullOrWhiteSpace(_currentUser.FIO))
-                errors.AppendLine("Укажите ФИО!");
-
-            if (errors.Length > 0)
-            {
-                MessageBox.Show(errors.ToString());
-                return;
-            }
-
-            try
-            {
                 using (var db = new Khakimova_DB_PaymentEntities())
                 {
-                    // Сохраняем фото перед сохранением пользователя
-                    if (!string.IsNullOrEmpty(_selectedPhotoPath))
-                    {
-                        _currentUser.Photo = SaveUserPhoto();
-                    }
+                    User userToSave;
 
-                    if (_currentUser.ID == 0)
+                    if (_currentUser != null)
                     {
-                        db.User.Add(_currentUser);
+                        userToSave = db.User.FirstOrDefault(u => u.ID == _currentUser.ID);
+                        if (userToSave == null)
+                        {
+                            MessageBox.Show("Пользователь не найден в базе данных!", "Ошибка");
+                            return;
+                        }
                     }
                     else
                     {
-                        var existingUser = db.User.FirstOrDefault(u => u.ID == _currentUser.ID);
-                        if (existingUser != null)
-                        {
-                            existingUser.Login = _currentUser.Login;
-                            existingUser.Password = _currentUser.Password;
-                            existingUser.Role = _currentUser.Role;
-                            existingUser.FIO = _currentUser.FIO;
-                            existingUser.Photo = _currentUser.Photo;
-                        }
+                        userToSave = new User();
+                        db.User.Add(userToSave);
+                    }
+
+                    userToSave.Login = LoginTextBox.Text.Trim();
+                    userToSave.FIO = FioTextBox.Text.Trim();
+                    userToSave.Role = (RoleComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString();
+
+                    if (!string.IsNullOrEmpty(_photoFileName) && _imageData != null)
+                    {
+                        string fileExtension = Path.GetExtension(_photoFileName);
+                        string uniqueFileName = $"{Guid.NewGuid()}{fileExtension}";
+                        string destinationPath = Path.Combine(_photosDirectory, uniqueFileName);
+
+                        File.WriteAllBytes(destinationPath, _imageData);
+                        userToSave.Photo = uniqueFileName;
+                    }
+                    else if (!string.IsNullOrEmpty(_photoFileName))
+                    {
+                        userToSave.Photo = Path.GetFileName(_photoFileName);
+                    }
+                    else
+                    {
+                        userToSave.Photo = null;
                     }
 
                     db.SaveChanges();
-                    MessageBox.Show("Данные успешно сохранены!");
-                    NavigationService?.GoBack();
+
+                    string message = _currentUser != null ?
+                        "Данные пользователя успешно обновлены!" :
+                        "Пользователь успешно добавлен!";
+
+                    MessageBox.Show(message, "Успех",
+                                  MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    if (NavigationService?.CanGoBack == true)
+                    {
+                        NavigationService.GoBack();
+                    }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка сохранения: {ex.Message}");
+                MessageBox.Show($"Ошибка сохранения данных: {ex.Message}", "Ошибка");
             }
         }
 
-        private void ButtonClean_Click(object sender, RoutedEventArgs e)
+        private void ClearButton_Click(object sender, RoutedEventArgs e)
         {
-            TBLogin.Text = "";
-            TBPass.Text = "";
-            cmbRole.SelectedIndex = -1;
-            TBFio.Text = "";
-            TBPhotoName.Text = "";
-            UserImage.Source = null;
-            _selectedPhotoPath = "";
+            if (MessageBox.Show("Вы уверены, что хотите очистить все поля?", "Подтверждение",
+                              MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                ClearForm();
+            }
         }
 
-        private void ButtonBack_Click(object sender, RoutedEventArgs e)
+        private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService?.GoBack();
+            if (NavigationService?.CanGoBack == true)
+            {
+                NavigationService.GoBack();
+            }
+            else
+            {
+                MessageBox.Show("Нет предыдущей страницы для возврата.", "Информация",
+                              MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
     }
 }

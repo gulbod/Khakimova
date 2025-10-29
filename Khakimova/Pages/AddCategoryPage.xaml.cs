@@ -8,24 +8,28 @@ namespace Khakimova.Pages
     public partial class AddCategoryPage : Page
     {
         private readonly Category _currentCategory;
+        private readonly Action<Category> _saveCallback;
 
-        public AddCategoryPage(object selectedCategory)
+        public AddCategoryPage(Category selectedCategory, Action<Category> saveCallback)
         {
             InitializeComponent();
+            _saveCallback = saveCallback;
 
-            if (selectedCategory is Category category)
+            if (selectedCategory != null)
             {
-                _currentCategory = category;
-                // Установка данных из selectedCategory
+                _currentCategory = selectedCategory;
                 TbCategoryName.Text = _currentCategory.Name;
-
-                // Меняем заголовок для режима редактирования
                 this.Title = "Редактирование категории";
             }
             else
             {
                 this.Title = "Добавление категории";
             }
+        }
+
+        // Конструктор без callback для обратной совместимости
+        public AddCategoryPage(object selectedCategory) : this(selectedCategory as Category, null)
+        {
         }
 
         private void ButtonSaveCategory_Click(object sender, RoutedEventArgs e)
@@ -43,45 +47,40 @@ namespace Khakimova.Pages
 
             try
             {
+                Category categoryToSave;
+
                 if (_currentCategory == null)
                 {
-                    // Логика создания новой категории
-                    var newCategory = new Category
+                    // Создание новой категории
+                    categoryToSave = new Category
                     {
-                        ID = GenerateNewId(), // Нужно генерировать новый ID
-                        Name = TbCategoryName.Text
+                        ID = 0, // Временный ID, будет заменен в SaveCategory
+                        Name = TbCategoryName.Text.Trim()
                     };
-
-                    // В реальном приложении здесь будет сохранение в БД
-                    // _context.Categories.Add(newCategory);
-                    // _context.SaveChanges();
-
-                    MessageBox.Show("Категория успешно создана!");
                 }
                 else
                 {
-                    // Логика обновления существующей категории
-                    _currentCategory.Name = TbCategoryName.Text;
-
-                    // В реальном приложении здесь будет обновление в БД
-                    // _context.SaveChanges();
-
-                    MessageBox.Show("Категория успешно обновлена!");
+                    // Обновление существующей категории
+                    _currentCategory.Name = TbCategoryName.Text.Trim();
+                    categoryToSave = _currentCategory;
                 }
 
-                NavigationService?.GoBack();
+                // Вызываем callback для сохранения
+                if (_saveCallback != null)
+                {
+                    _saveCallback(categoryToSave);
+                    MessageBox.Show(_currentCategory == null ? "Категория успешно создана!" : "Категория успешно обновлена!");
+                    NavigationService?.GoBack();
+                }
+                else
+                {
+                    MessageBox.Show("Ошибка: функция сохранения не задана");
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка сохранения: {ex.Message}");
             }
-        }
-
-        private int GenerateNewId()
-        {
-            // В реальном приложении ID генерируется базой данных
-            // Здесь простая заглушка для демонстрации
-            return DateTime.Now.Second + DateTime.Now.Millisecond;
         }
 
         private void ButtonClean_Click(object sender, RoutedEventArgs e)
